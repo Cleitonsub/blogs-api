@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = {
-  // As linhas abaixo são para auto incremento no desenvolvimento
   /**
+  * As linhas abaixo são para auto incremento no desenvolvimento
   * @param {import('sequelize').queryInterface } queryInterface 
   * @param {import('sequelize').Sequelize} Sequelize 
   */
