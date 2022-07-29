@@ -1,21 +1,25 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  // As linhas abaixo são para auto incremento no desenvolvimento
   /**
+   * As linhas abaixo são para auto incremento no desenvolvimento
    * @param {import('sequelize').Sequelize } sequelize 
    * @param {import('sequelize').DataTypes} DataTypes 
    */
-  const Users = sequelize.define('User', {
-    id: DataTypes.INTEGER,
+  const User = sequelize.define('User', {
+    id: {
+      primaryKey: true,
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
+    },
     displayName: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     image: DataTypes.STRING
   }, {
-    underscored: true,
+    timestamps: false,
     tablename: 'Users'
-  })
-
-  return Users;
+  }
+  )
+  return User;
 };
