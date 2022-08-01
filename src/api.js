@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const authRouter = require('./routers/authRouter');
 const userRouter = require('./routers/userRouter');
 const errorHandlerMiddleware = require('./middlewares/error.middleware');
+const validateToken = require('./middlewares/validateToken');
 
 const app = express();
 require('express-async-errors');
@@ -14,6 +15,7 @@ app.use(cors());
 
 app.use('/login', authRouter);
 app.use('/user', userRouter);
+app.use(validateToken);
 
 app.use(errorHandlerMiddleware);
 

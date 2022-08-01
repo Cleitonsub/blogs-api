@@ -32,6 +32,15 @@ const createUserService = async (userBody) => {
   }
 };
 
+const getAllUsersService = async () => {
+  const result = await User.findAll({ attributes: { exclude: 'password' } });
+  if (!result) {
+    throw new Error();
+  }
+  return result;
+};
+
 module.exports = {
   createUserService,
+  getAllUsersService,
 };
