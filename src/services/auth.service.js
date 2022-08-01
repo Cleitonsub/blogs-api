@@ -1,5 +1,6 @@
 const { User } = require('../database/models');
 const { createToken } = require('./jwt.service');
+const { checkPassword } = require('./password.service');
 
 const validateLogin = async (authBody) => {
   const { email, password } = authBody;
@@ -11,6 +12,9 @@ const validateLogin = async (authBody) => {
     throw error;
   }
   const result = await User.findOne({ where: { email, password } });
+
+  checkPassword(password, result.password);
+
   if (!result) {
     const error = { name: 'ValidationError', message: 'Invalid fields' };
     throw error;
