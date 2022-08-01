@@ -1,15 +1,22 @@
-const jwtService = require('./jwt.service');
-
 const { User } = require('../database/models');
-const { OK } = require('../helpers/httpStatusCode');
+const { createToken } = require('./jwt.service');
 
-const validateLogin = async (email, password) => {
-  console.log(email, password);
-  if (!email || !password) return { code: 400, message: 'Some required fields are missing' };
+const validateLogin = async (authBody) => {
+  const { email, password } = authBody;
+  if (!email || !password) {
+    const error = {
+      name: 'ValidationError',
+      message: 'Some required fields are missing',
+    };
+    throw error;
+  }
   const result = await User.findOne({ where: { email, password } });
-  if (!result) return { code: 400, message: 'Invalid fields' };
-  const token = jwtService.createToken(email);
-  return { code: OK, token };
+  if (!result) {
+    const error = { name: 'ValidationError', message: 'Invalid fields' };
+    throw error;
+  }
+  const token = createToken(authBody.email);
+  return token;
 };
 
 module.exports = {

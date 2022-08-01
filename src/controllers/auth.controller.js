@@ -1,11 +1,13 @@
+const { OK } = require('../helpers/httpStatusCode');
 const { validateLogin } = require('../services/auth.service');
 
-const login = async (req, res) => {
-  const { email, password } = req.body;
-  const { code, message, token } = await validateLogin(email, password);
-  if (message) return res.status(code).json({ message });
-
-  return res.status(code).json({ token });
+const login = async (req, res, next) => {
+  try {
+    const token = await validateLogin(req.body);
+    return res.status(OK).json({ token });
+  } catch (e) {
+    next(e);
+  }
 };
 
 module.exports = {

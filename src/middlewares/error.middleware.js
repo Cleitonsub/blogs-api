@@ -4,7 +4,7 @@ const errors = {
   NotFoundError: 404,
   ConflictError: 409,
 };
-    
+
 const errorHandlerMiddleware = ({ name, message }, _req, res, _next) => {
   const status = errors[name];
   // console.log(status);
