@@ -26,6 +26,15 @@ const createCategoryService = async (categoryBody) => {
   }
 };
 
+const getAllCategoriesService = async () => {
+  const result = await Category.findAll();
+  if (!result) {
+    throw new Error();
+  }
+  return result;
+};
+
 module.exports = {
   createCategoryService,
+  getAllCategoriesService,
 };
