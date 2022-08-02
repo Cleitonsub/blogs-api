@@ -1,7 +1,15 @@
-const { createUserService, getAllUsersService } = require('../services/user.service');
-const { createToken } = require('../services/jwt.service');
-
-const { CREATED, OK } = require('../helpers/httpStatusCode');
+const {
+  createUserService,
+  getAllUsersService,
+  getByIdService,
+} = require('../services/user.service');
+const {
+  createToken,
+} = require('../services/jwt.service');
+const {
+  CREATED,
+  OK,
+} = require('../helpers/httpStatusCode');
 
 const createUser = async (req, res, next) => {
   try {
@@ -22,7 +30,18 @@ const getAllUsers = async (_req, res, next) => {
   }
 };
 
+const getById = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const result = await getByIdService(id);
+    return res.status(OK).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
 module.exports = {
   createUser,
   getAllUsers,
+  getById,
 };

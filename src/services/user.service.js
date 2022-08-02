@@ -7,13 +7,13 @@ const validateBody = (data) => {
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
     image: Joi.string().required(),
-});
+  });
 
-const { error, value } = schema.validate(data);
+  const { error, value } = schema.validate(data);
 
-if (error) throw error;
+  if (error) throw error;
 
-return value;
+  return value;
 };
 
 const createUserService = async (userBody) => {
@@ -38,7 +38,18 @@ const getAllUsersService = async () => {
   return result;
 };
 
+const getByIdService = async (id) => {
+  const result = await User.findOne({ where: { id }, attributes: { exclude: 'password' } });
+  console.log(id);
+  if (!result) {
+    const error = { name: 'NotFoundError', message: 'User does not exist' };
+    throw error;
+  }
+  return result;
+};
+
 module.exports = {
   createUserService,
   getAllUsersService,
+  getByIdService,
 };
