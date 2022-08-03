@@ -53,11 +53,11 @@ const getAllPostsService = async () => {
   const result = await BlogPost.findAll({
     include: [{
       model: User, 
-      as: 'Users',
+      as: 'user',
       attributes: { exclude: ['password'] },
     }, {
       model: Category,
-      as: 'Categories',
+      as: 'categories',
     }],
   });
   console.log(result);

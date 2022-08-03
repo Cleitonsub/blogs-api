@@ -20,7 +20,7 @@ const createPost = async (req, res, next) => {
 
 const getAllPosts = async (_req, res) => {
   const result = await getAllPostsService();
-  return res.status(OK).json({ result });
+  return res.status(OK).json(result);
 };
 
 module.exports = {
