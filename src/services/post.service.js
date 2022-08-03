@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const Sequelize = require('sequelize');
-const { BlogPost, PostCategory, Category } = require('../database/models');
+const { BlogPost, PostCategory, Category, User } = require('../database/models');
 const config = require('../database/config/config');
 
 const sequelize = new Sequelize(config.development);
@@ -50,10 +50,17 @@ const createPostService = async (PostBody, userId) => {
 };
 
 const getAllPostsService = async () => {
-  const result = await BlogPost.findAll();
-  if (!result) {
-    throw new Error();
-  }
+  const result = await BlogPost.findAll({
+    include: [{
+      model: User, 
+      as: 'Users',
+      attributes: { exclude: ['password'] },
+    }, {
+      model: Category,
+      as: 'Categories',
+    }],
+  });
+  console.log(result);
   return result;
 };
 

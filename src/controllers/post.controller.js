@@ -1,10 +1,10 @@
 const {
   createPostService,
-  // getAllPostsService,
+  getAllPostsService,
 } = require('../services/post.service');
 const {
   CREATED,
-  // OK,
+  OK,
 } = require('../helpers/httpStatusCode');
 const { getUserID } = require('../helpers/getUserId');
 
@@ -18,16 +18,12 @@ const createPost = async (req, res, next) => {
   }
 };
 
-// const getAllPosts = async (_req, res, next) => {
-//   try {
-//     const result = await getAllPostsService();
-//     return res.status(OK).json(result);
-//   } catch (e) {
-//     next(e);
-//   }
-// };
+const getAllPosts = async (_req, res) => {
+  const result = await getAllPostsService();
+  return res.status(OK).json({ result });
+};
 
 module.exports = {
   createPost,
-  // getAllPosts,
+  getAllPosts,
 };
