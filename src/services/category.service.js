@@ -22,7 +22,8 @@ const createCategoryService = async (categoryBody) => {
       const error = { name: 'ConflictError', message: 'Category already registered' };
       throw error;
     }
-    return categoryBody;
+    const result = await Category.create(validate);
+    return result;
   }
 };
 
