@@ -10,7 +10,7 @@ const validateToken = (req, _res, next) => {
   }
   try {
     const { data } = jwt.verify(authorization, process.env.JWT_SECRET);
-    console.log(data, req.user);
+    // console.log(data, req.user);
     req.user = data;
     return next();
   } catch (error) {

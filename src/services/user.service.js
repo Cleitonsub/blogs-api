@@ -40,7 +40,7 @@ const getAllUsersService = async () => {
 
 const getByIdService = async (id) => {
   const result = await User.findOne({ where: { id }, attributes: { exclude: 'password' } });
-  console.log(id);
+  // console.log(id);
   if (!result) {
     const error = { name: 'NotFoundError', message: 'User does not exist' };
     throw error;

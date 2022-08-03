@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const authRouter = require('./routers/authRouter');
 const userRouter = require('./routers/userRouter');
 const categoryRouter = require('./routers/categoryRouter');
+const postRouter = require('./routers/postRouter');
 const errorHandlerMiddleware = require('./middlewares/error.middleware');
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(cors());
 app.use('/login', authRouter);
 app.use('/user', userRouter);
 app.use('/categories', categoryRouter);
+app.use('/post', postRouter);
 
 app.use(errorHandlerMiddleware);
 
