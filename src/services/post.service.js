@@ -64,7 +64,28 @@ const getAllPostsService = async () => {
   return result;
 };
 
+const getPostByIdService = async (id) => {
+  const result = await BlogPost.findOne({
+    where: { id },
+    include: [{
+      model: User, 
+      as: 'user',
+      attributes: { exclude: ['password'] },
+    }, {
+      model: Category,
+      as: 'categories',
+    }],
+  });
+  // console.log(id);
+  if (!result) {
+    const error = { name: 'NotFoundError', message: 'Post does not exist' };
+    throw error;
+  }
+  return result;
+};
+
 module.exports = {
   createPostService,
   getAllPostsService,
+  getPostByIdService,
 };
