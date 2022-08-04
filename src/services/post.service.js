@@ -1,7 +1,9 @@
+const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 const Sequelize = require('sequelize');
 const { BlogPost, PostCategory, Category, User } = require('../database/models');
 const config = require('../database/config/config');
+require('dotenv').config();
 
 const sequelize = new Sequelize(config.development);
 
@@ -23,6 +25,31 @@ const validateBody = async (data) => {
     const valiError = { name: 'ValidationError', message: '"categoryIds" not found' };
     throw valiError;
   }
+};
+
+const validateUpdateBody = (data) => {
+  const schema = Joi.object({
+    postId: Joi.number().required(),
+    token: Joi.string().required(),
+    title: Joi.string().required(),
+    content: Joi.string().required(),
+  });
+  const { error } = schema.validate(data);
+  if (error) {
+    const valiError = { name: 'ValidationError', message: 'Some required fields are missing' };
+    throw valiError;
+  }
+};
+
+const validateUserIdWithPost = async (postId, token) => {
+  const { data } = jwt.verify(token, process.env.JWT_SECRET);
+  const userId = await User.findOne({ where: { email: data }, attributes: ['id'] });
+  const userIdFromPost = await BlogPost.findOne({ where: { id: postId }, attributes: ['userId'] });
+  if (userId.dataValues.id !== userIdFromPost.dataValues.userId) {
+    const error = { name: 'UnauthorizedError', message: 'Unauthorized user' };
+    throw error;
+  }
+  return true;
 };
 
 const createPostService = async (PostBody, userId) => {
@@ -76,7 +103,6 @@ const getPostByIdService = async (id) => {
       as: 'categories',
     }],
   });
-  // console.log(id);
   if (!result) {
     const error = { name: 'NotFoundError', message: 'Post does not exist' };
     throw error;
@@ -84,8 +110,30 @@ const getPostByIdService = async (id) => {
   return result;
 };
 
+const updatePostByIdService = async (dataPost) => {
+  validateUpdateBody(dataPost);
+  const { postId, token, title, content } = dataPost;
+  const validateUser = await validateUserIdWithPost(postId, token);
+  if (validateUser) {
+    const t = await sequelize.transaction();
+    try {
+      await BlogPost.update({ title, content }, { where: { id: postId }, transaction: t });
+      const result = await BlogPost.findByPk(postId, { include: [
+          { model: User, as: 'user', attributes: { exclude: ['password'] } },
+          { model: Category, as: 'categories' }],
+          transaction: t,
+      });
+      await t.commit();
+      return result;
+    } catch (error) {
+      await t.rollback();
+    }
+  }
+};
+
 module.exports = {
   createPostService,
   getAllPostsService,
   getPostByIdService,
+  updatePostByIdService,
 };

@@ -2,6 +2,7 @@ const {
   createPostService,
   getAllPostsService,
   getPostByIdService,
+  updatePostByIdService,
 } = require('../services/post.service');
 const {
   CREATED,
@@ -34,8 +35,22 @@ const getPostById = async (req, res, next) => {
   }
 };
 
+const updatePostById = async (req, res, next) => {
+  const postId = req.params.id;
+  const { title, content } = req.body;
+  const token = req.headers.authorization;
+  const data = { postId, token, title, content };
+  try {
+    const result = await updatePostByIdService(data);
+    return res.status(OK).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createPost,
   getAllPosts,
   getPostById,
+  updatePostById,
 };
