@@ -131,9 +131,27 @@ const updatePostByIdService = async (dataPost) => {
   }
 };
 
+const deletePostByIdService = async (dataPost) => {
+  const { postId, token } = dataPost;
+  const validatePost = await getPostByIdService(postId);
+  const validateUser = await validateUserIdWithPost(postId, token);
+  if (validateUser && validatePost) {
+    const t = await sequelize.transaction();
+    try {
+      await PostCategory.destroy({ where: { postId }, transaction: t });
+      await BlogPost.destroy({ where: { id: postId }, transaction: t });
+      await t.commit();
+      return true;
+    } catch (error) {
+      await t.rollback();
+    }
+  }
+};
+
 module.exports = {
   createPostService,
   getAllPostsService,
   getPostByIdService,
   updatePostByIdService,
+  deletePostByIdService,
 };

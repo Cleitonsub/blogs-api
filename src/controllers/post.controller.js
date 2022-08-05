@@ -3,10 +3,12 @@ const {
   getAllPostsService,
   getPostByIdService,
   updatePostByIdService,
+  deletePostByIdService,
 } = require('../services/post.service');
 const {
   CREATED,
   OK,
+  NO_CONTENT,
 } = require('../helpers/httpStatusCode');
 const { getUserID } = require('../helpers/getUserId');
 
@@ -48,9 +50,24 @@ const updatePostById = async (req, res, next) => {
   }
 };
 
+const deletePostById = async (req, res, next) => {
+  const postId = req.params.id;
+  const token = req.headers.authorization;
+  const data = { postId, token };
+  try {
+    const result = await deletePostByIdService(data);
+    if (result) {
+      return res.status(NO_CONTENT).end();
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createPost,
   getAllPosts,
   getPostById,
   updatePostById,
+  deletePostById,
 };
