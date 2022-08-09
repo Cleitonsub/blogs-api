@@ -61,7 +61,7 @@ const deleteUserService = async (token) => {
   const postIds = await posts.map((post) => post.dataValues.id);
   const t = await sequelize.transaction();
   try {
-    await Promise.all([postIds.map((postId) => PostCategory.destroy({ where: { postId } }))]);
+    await postIds.map((postId) => PostCategory.destroy({ where: { postId } }));
     await BlogPost.destroy({ where: { userId: id }, transaction: t });
     await User.destroy({ where: { id }, transaction: t });
     await t.commit();
