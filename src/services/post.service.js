@@ -87,7 +87,6 @@ const getAllPostsService = async () => {
       as: 'categories',
     }],
   });
-  console.log(result);
   return result;
 };
 
@@ -148,10 +147,22 @@ const deletePostByIdService = async (dataPost) => {
   }
 };
 
+const getAllPostsByUserIdService = async (userId) => {
+  const post = await BlogPost.findAll({ 
+      where: { userId },
+    });
+  if (!post || !userId) {
+    const error = { name: 'NotFoundError', message: 'Post does not exist' };
+    throw error;
+  }
+  return post;
+};
+
 module.exports = {
   createPostService,
   getAllPostsService,
   getPostByIdService,
   updatePostByIdService,
   deletePostByIdService,
+  getAllPostsByUserIdService,
 };

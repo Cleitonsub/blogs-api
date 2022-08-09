@@ -2,6 +2,7 @@ const {
   createUserService,
   getAllUsersService,
   getByIdService,
+  deleteUserService,
 } = require('../services/user.service');
 const {
   createToken,
@@ -9,6 +10,7 @@ const {
 const {
   CREATED,
   OK,
+  NO_CONTENT,
 } = require('../helpers/httpStatusCode');
 
 const createUser = async (req, res, next) => {
@@ -40,8 +42,19 @@ const getById = async (req, res, next) => {
   }
 };
 
+const deleteUser = async (req, res, next) => {
+  const token = req.headers.authorization;
+  try {
+    await deleteUserService(token);
+    return res.status(NO_CONTENT).end();
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createUser,
   getAllUsers,
   getById,
+  deleteUser,
 };

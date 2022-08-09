@@ -1,5 +1,12 @@
+const jwt = require('jsonwebtoken');
 const Joi = require('joi');
-const { User } = require('../database/models');
+const Sequelize = require('sequelize');
+const { User, BlogPost, PostCategory } = require('../database/models');
+const config = require('../database/config/config');
+const { getAllPostsByUserIdService } = require('./post.service');
+require('dotenv').config();
+
+const sequelize = new Sequelize(config.development);
 
 const validateBody = (data) => {
   const schema = Joi.object({
@@ -40,7 +47,6 @@ const getAllUsersService = async () => {
 
 const getByIdService = async (id) => {
   const result = await User.findOne({ where: { id }, attributes: { exclude: 'password' } });
-  // console.log(id);
   if (!result) {
     const error = { name: 'NotFoundError', message: 'User does not exist' };
     throw error;
@@ -48,8 +54,26 @@ const getByIdService = async (id) => {
   return result;
 };
 
+const deleteUserService = async (token) => {
+  const { data } = jwt.verify(token, process.env.JWT_SECRET);
+  const { dataValues: { id } } = await User.findOne({ where: { email: data } });
+  const posts = await getAllPostsByUserIdService(id);
+  const postIds = await posts.map((post) => post.dataValues.id);
+  const t = await sequelize.transaction();
+  try {
+    await Promise.all([postIds.map((postId) => PostCategory.destroy({ where: { postId } }))]);
+    await BlogPost.destroy({ where: { userId: id }, transaction: t });
+    await User.destroy({ where: { id }, transaction: t });
+    await t.commit();
+    return true;
+  } catch (error) {
+    await t.rollback();
+  }
+};
+
 module.exports = {
   createUserService,
   getAllUsersService,
   getByIdService,
+  deleteUserService,
 };
